@@ -4,6 +4,10 @@
 export const site = {
 	name: 'DEM Surveying, P.C.',
 	shortName: 'DEM Surveying',
+	// The one place the production domain lives — every canonical URL, the
+	// sitemap, Open Graph tags, JSON-LD and llms.txt derive from this.
+	// Placeholder until the real domain is confirmed; update here only.
+	url: 'https://www.demsurveying.com',
 	founded: 1999,
 	founder: 'Daniel E. Moore, PLS',
 	tagline: 'Professional land surveying in Brookville, Pennsylvania since 1999.',
@@ -20,6 +24,8 @@ export const site = {
 		zip: '15825'
 	},
 	coordinates: { lat: `41° 09' 47" N`, long: `79° 02' 55" W` },
+	// Decimal form of the coordinates above, for JSON-LD's GeoCoordinates.
+	geo: { lat: 41.1631, long: -79.0486 },
 	facebook: 'https://www.facebook.com/pages/DEM-Surveying-PC/160002874030246',
 	credentials:
 		'Qualified HUBZone SBC · Professional liability insured · PSLS, NSPS, ACSM, BACC, NFIB'

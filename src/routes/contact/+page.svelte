@@ -3,8 +3,11 @@
 	import { site } from '$lib/site';
 	import { container } from '$lib/styles';
 	import { contactStats } from '$lib/content/stats';
+	import { faqSchema } from '$lib/content/assistant';
 	import { reveal } from '$lib/attachments/reveal';
 
+	import Seo from '$lib/components/Seo.svelte';
+	import JsonLd from '$lib/components/JsonLd.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import StatBand from '$lib/components/StatBand.svelte';
@@ -24,13 +27,13 @@
 	];
 </script>
 
-<svelte:head>
-	<title>Contact — DEM Surveying, P.C.</title>
-	<meta
-		name="description"
-		content="Call (814) 849-8230, email Dan or Steve directly, or send parcel details through the quote form. Brookville, Pennsylvania."
-	/>
-</svelte:head>
+<Seo
+	title="Contact — DEM Surveying, P.C."
+	description="Call (814) 849-8230, email Dan or Steve directly, or send parcel details through the quote form. Brookville, Pennsylvania."
+/>
+<!-- Same facts the assistant answers with, as FAQPage schema — one set of
+     vetted Q&A read by both a visitor and a crawler. -->
+<JsonLd data={faqSchema} />
 
 <!-- ===================================================================== Hero -->
 <section class="bg-ink">

@@ -14,6 +14,7 @@
 	} from '$lib/content/photos';
 	import { reveal } from '$lib/attachments/reveal';
 
+	import Seo from '$lib/components/Seo.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import PhotoPlate from '$lib/components/PhotoPlate.svelte';
@@ -29,13 +30,10 @@
 	];
 </script>
 
-<svelte:head>
-	<title>About — DEM Surveying, P.C.</title>
-	<meta
-		name="description"
-		content="Providing quality professional services since 1999. Our staff, our Brookville office, and the equipment our crews carry into the field."
-	/>
-</svelte:head>
+<Seo
+	title="About — DEM Surveying, P.C."
+	description="Providing quality professional services since 1999. Our staff, our Brookville office, and the equipment our crews carry into the field."
+/>
 
 <!-- ===================================================================== Hero -->
 <section class="bg-ink">

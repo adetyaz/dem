@@ -9,6 +9,7 @@
 	import { homeStats } from '$lib/content/stats';
 	import { reveal } from '$lib/attachments/reveal';
 
+	import Seo from '$lib/components/Seo.svelte';
 	import Eyebrow from '$lib/components/Eyebrow.svelte';
 	import Button from '$lib/components/Button.svelte';
 	import PhotoPlate from '$lib/components/PhotoPlate.svelte';
@@ -28,13 +29,10 @@
 	];
 </script>
 
-<svelte:head>
-	<title>DEM Surveying, P.C. — Land Surveying in Brookville, Pennsylvania</title>
-	<meta
-		name="description"
-		content="Licensed Pennsylvania land surveyors since 1999. Boundary, ALTA-ACSM title, topographic, construction and pipeline surveys, from Brookville."
-	/>
-</svelte:head>
+<Seo
+	title="DEM Surveying, P.C. — Land Surveying in Brookville, Pennsylvania"
+	description="Licensed Pennsylvania land surveyors since 1999. Boundary, ALTA-ACSM title, topographic, construction and pipeline surveys, from Brookville."
+/>
 
 <!-- ===================================================================== Hero -->
 <section class="bg-ink">
