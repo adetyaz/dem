@@ -1,0 +1,231 @@
+@import 'tailwindcss';
+
+/* Touch devices fake a :hover that sticks after a tap. Tailwind v4 gates the
+   hover variant on (hover: hover) already; add (pointer: fine) so styluses and
+   Android devices that claim hover support are ruled out too. Redefining the
+   variant fixes every `hover:` utility in the project at once. */
+@custom-variant hover {
+	@media (hover: hover) and (pointer: fine) {
+		&:hover {
+			@slot;
+		}
+	}
+}
+
+/* --------------------------------------------------------------------------
+   Design tokens — direction 2A
+   Near-black ground, warm taupe accent, bone page. Poppins for voice,
+   IBM Plex Mono for plat marginalia (edge labels, coordinates, numerals).
+   -------------------------------------------------------------------------- */
+@theme {
+	--font-sans: 'Poppins', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	--font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+	/* Ground */
+	--color-ink: #1b1917;
+	--color-ink-deep: #141210;
+	--color-ink-raised: #211e1a;
+	--color-ink-line: #332e28;
+	--color-ink-line-strong: #423d36;
+	--color-ink-field: #221f1b;
+	--color-ink-field-line: #3a342d;
+
+	/* Page */
+	--color-bone: #f6f3ee;
+	--color-bone-line: #e4ded3;
+	--color-bone-line-soft: #e0d9cd;
+
+	/* Accent */
+	--color-taupe: #b39b7d;
+	--color-taupe-bright: #c7b096;
+	--color-taupe-deep: #a08a6e;
+	--color-taupe-ink: #8a7b66;
+
+	/* Type */
+	--color-prose: #5b544b;
+	--color-prose-invert: #bdb5a9;
+	--color-dust: #a89f92;
+	--color-dust-bright: #d6cfc4;
+	--color-dust-dim: #8d867b;
+	--color-dust-soft: #e3ddd3;
+	--color-slate-dim: #6f675b;
+	--color-slate-faint: #7c746a;
+
+	/* Fluid display scale. The 2A canvas is drawn at 1240px; these clamp the
+	   headline sizes down to phone widths without a breakpoint per step. */
+	--text-display: clamp(2.25rem, 6.4vw, 3.375rem);
+	--text-display--line-height: 1.08;
+	--text-display--letter-spacing: -0.02em;
+	--text-section: clamp(1.875rem, 4.4vw, 2.5rem);
+	--text-section--line-height: 1.14;
+	--text-section--letter-spacing: -0.02em;
+	--text-band: clamp(1.625rem, 3.6vw, 2.125rem);
+	--text-band--line-height: 1.15;
+	--text-band--letter-spacing: -0.02em;
+
+	/* Motion — strong curves; the built-in CSS easings are too weak */
+	--ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+	--ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+	--ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@layer base {
+	html {
+		-webkit-tap-highlight-color: transparent;
+		-webkit-text-size-adjust: 100%;
+		/* Sticky header clearance so #anchor jumps do not land under the bar */
+		scroll-padding-top: 5.5rem;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		html {
+			scroll-behavior: smooth;
+		}
+	}
+
+	body {
+		background: var(--color-bone);
+		color: var(--color-ink);
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+		text-rendering: optimizeLegibility;
+	}
+
+	/* Controls are controls: never selectable, never tap-delayed. Body copy
+	   stays selectable — people copy addresses and phone numbers. */
+	button,
+	a[role='button'],
+	[role='button'],
+	summary {
+		touch-action: manipulation;
+		user-select: none;
+		-webkit-user-select: none;
+	}
+
+	a {
+		touch-action: manipulation;
+		color: inherit;
+		text-decoration: none;
+	}
+
+	/* 16px floor on coarse pointers stops iOS Safari zooming into the field
+	   on focus — the real fix, rather than disabling zoom. */
+	@media (pointer: coarse) {
+		input,
+		textarea,
+		select {
+			font-size: 16px;
+		}
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--color-taupe);
+		outline-offset: 3px;
+		border-radius: 2px;
+	}
+
+	::selection {
+		background: var(--color-taupe);
+		color: var(--color-ink);
+	}
+
+	/* Diagonal hatch standing in for photography not yet supplied. */
+	.plate-light {
+		background: repeating-linear-gradient(135deg, #e5dfd4 0 10px, #dcd5c8 10px 20px);
+	}
+	.plate-light-2 {
+		background: repeating-linear-gradient(135deg, #ded7ca 0 10px, #d4ccbd 10px 20px);
+	}
+	.plate-light-3 {
+		background: repeating-linear-gradient(135deg, #d7cfc0 0 10px, #cdc4b3 10px 20px);
+	}
+	.plate-dark {
+		background: repeating-linear-gradient(135deg, #2a2621 0 10px, #322d27 10px 20px);
+	}
+	.plate-dark-sm {
+		background: repeating-linear-gradient(135deg, #2f2a24 0 8px, #383229 8px 16px);
+	}
+}
+
+@layer components {
+	/* ---- Page gutter ------------------------------------------------------
+	   The 2A canvas gutter, stepped for phones, and never narrower than the
+	   landscape notch inset. `env()` resolves to 0 without viewport-fit=cover,
+	   which app.html sets. */
+	.gutter {
+		padding-left: max(1.25rem, env(safe-area-inset-left));
+		padding-right: max(1.25rem, env(safe-area-inset-right));
+	}
+
+	@media (width >= 40rem) {
+		.gutter {
+			padding-left: max(2rem, env(safe-area-inset-left));
+			padding-right: max(2rem, env(safe-area-inset-right));
+		}
+	}
+
+	@media (width >= 64rem) {
+		.gutter {
+			padding-left: max(3rem, env(safe-area-inset-left));
+			padding-right: max(3rem, env(safe-area-inset-right));
+		}
+	}
+
+	/* ---- Scroll reveal ---------------------------------------------------
+	   Marketing surfaces only, fired once. The hidden start state is gated on
+	   `html.js`, set before first paint, so it never flashes and never hides
+	   content when scripting is unavailable. */
+	.reveal {
+		will-change: opacity, transform;
+	}
+
+	@media (prefers-reduced-motion: no-preference) {
+		html.js .reveal[data-reveal='pending'] {
+			opacity: 0;
+			transform: translateY(10px);
+		}
+
+		html.js .reveal[data-reveal='shown'] {
+			opacity: 1;
+			transform: translateY(0);
+			transition:
+				opacity 500ms var(--ease-out) var(--reveal-delay, 0ms),
+				transform 500ms var(--ease-out) var(--reveal-delay, 0ms);
+		}
+	}
+
+	/* Reduced motion keeps the fade (it aids comprehension) and drops the
+	   positional move. */
+	@media (prefers-reduced-motion: reduce) {
+		html.js .reveal[data-reveal='pending'] {
+			opacity: 0;
+		}
+		html.js .reveal[data-reveal='shown'] {
+			opacity: 1;
+			transition: opacity 300ms ease;
+		}
+	}
+
+	/* ---- Hero load sequence ----------------------------------------------
+	   A predetermined entrance that has to stay smooth while the browser is
+	   still fetching fonts and scripts, so it is a CSS animation (off the
+	   main thread) rather than JS. */
+	@media (prefers-reduced-motion: no-preference) {
+		.hero-step {
+			opacity: 0;
+			animation: hero-in 460ms var(--ease-out) forwards;
+			animation-delay: var(--step-delay, 0ms);
+		}
+	}
+
+	@keyframes hero-in {
+		from {
+			opacity: 0;
+			transform: translateY(12px);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+}
