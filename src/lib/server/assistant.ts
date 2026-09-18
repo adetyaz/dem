@@ -6,7 +6,7 @@ import { entries, answerQuestion, type Answer } from '$lib/content/assistant';
 const GROQ_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 /** Fast and capable; override with GROQ_MODEL if you'd rather use another. */
-const DEFAULT_MODEL = 'llama-3.3-70b-versatile';
+const DEFAULT_MODEL = 'openai/gpt-oss-20b';
 
 export type ChatMessage = { role: 'visitor' | 'assistant'; text: string };
 

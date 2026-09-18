@@ -22,19 +22,18 @@ npm run format     # prettier --write
 
 ## Environment
 
-The quote form is the only thing that needs configuration. Without it the form
-still validates and still works in `dev` (submissions are logged to the server
-console); **in production it fails loudly rather than silently dropping a
-lead**.
+Nothing is required to run the site. Two things are optional:
 
-| Variable         | Required      | Purpose                                        |
-| ---------------- | ------------- | ---------------------------------------------- |
-| `RESEND_API_KEY` | in production | Transport for quote requests (Resend HTTP API) |
-| `QUOTE_FROM`     | in production | A verified sender on your Resend domain        |
-| `QUOTE_INBOX`    | no            | Where requests land; defaults to the principal |
+| Variable            | Purpose                                                                  |
+| ------------------- | ------------------------------------------------------------------------ |
+| `GROQ_API_KEY`      | LLM-backed survey assistant. Without it, a deterministic lookup answers. |
+| `QUOTE_WEBHOOK_URL` | Where quote requests get POSTed. Without it, submissions just log.       |
 
-Transport lives in one place — [`src/lib/server/quote.ts`](src/lib/server/quote.ts).
-Swap `deliverQuoteRequest` for SMTP or a CRM and nothing else changes.
+`QUOTE_WEBHOOK_URL` takes any endpoint that accepts a JSON POST — a Slack or
+Discord incoming webhook, a Zapier/Make/n8n trigger, or your own. No vendor
+SDK, no account to set up first. Transport lives in one place —
+[`src/lib/server/quote.ts`](src/lib/server/quote.ts) — swap it for SMTP or a
+CRM and nothing else changes.
 
 ## Layout
 

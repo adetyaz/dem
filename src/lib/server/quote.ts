@@ -1,6 +1,4 @@
-import { dev } from '$app/environment';
 import { env } from '$env/dynamic/private';
-import { site } from '$lib/site';
 import { surveyTypes, timingOptions } from '$lib/content/services';
 
 import type { QuoteRequest, QuoteErrors } from '$lib/quote';
@@ -79,45 +77,29 @@ function asText(req: QuoteRequest): string {
 /**
  * Sends the request to the office.
  *
- * Transport is Resend's HTTP API, which needs no dependency. Configure:
- *   RESEND_API_KEY   — required in production
- *   QUOTE_INBOX      — where requests land (defaults to the principal)
- *   QUOTE_FROM       — a verified sender on your Resend domain
+ * Transport is a plain webhook: POST the submission as JSON to
+ * QUOTE_WEBHOOK_URL. Point it at whatever you already use — a Slack or
+ * Discord incoming webhook, a Zapier/Make/n8n trigger, or your own endpoint —
+ * no vendor SDK, no account to set up.
  *
- * With no key set this logs in dev so the form is testable offline, and
- * throws in production rather than silently swallowing a lead.
+ * With no URL set, this logs the submission instead, so the form works out
+ * of the box with nothing configured.
  */
 export async function deliverQuoteRequest(req: QuoteRequest, fetchFn: typeof fetch = fetch) {
-	const apiKey = env.RESEND_API_KEY;
-	const to = env.QUOTE_INBOX || site.email.principal;
-	const from = env.QUOTE_FROM;
+	const url = env.QUOTE_WEBHOOK_URL;
 
-	if (!apiKey || !from) {
-		if (dev) {
-			console.info(`[quote] Not configured; logging instead.\n${asText(req)}`);
-			return;
-		}
-		throw new Error(
-			'Quote delivery is not configured. Set RESEND_API_KEY and QUOTE_FROM in the environment.'
-		);
+	if (!url) {
+		console.info(`[quote] QUOTE_WEBHOOK_URL not set; logging instead.\n${asText(req)}`);
+		return;
 	}
 
-	const response = await fetchFn('https://api.resend.com/emails', {
+	const response = await fetchFn(url, {
 		method: 'POST',
-		headers: {
-			authorization: `Bearer ${apiKey}`,
-			'content-type': 'application/json'
-		},
-		body: JSON.stringify({
-			from,
-			to: [to],
-			reply_to: req.email || undefined,
-			subject: `Quote request — ${req.name}${req.county ? `, ${req.county} County` : ''}`,
-			text: asText(req)
-		})
+		headers: { 'content-type': 'application/json' },
+		body: JSON.stringify({ ...req, text: asText(req), submittedAt: new Date().toISOString() })
 	});
 
 	if (!response.ok) {
-		throw new Error(`Resend rejected the request (${response.status}): ${await response.text()}`);
+		throw new Error(`Webhook rejected the request (${response.status}): ${await response.text()}`);
 	}
 }
